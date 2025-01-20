@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نتائج البحث</title>
+</head>
+<body>
+    <h1>نتائج البحث</h1>
+    
+    <h2>نتائج Google</h2>
+    <ul>
+    {% for result in google_results %}
+        <li><a href="{{ result.link }}">{{ result.title }}</a></li>
+    {% endfor %}
+    </ul>
+
+    <h2>نتائج Yandex</h2>
+    <ul>
+    {% for result in yandex_results %}
+        <li><a href="{{ result.link }}">{{ result.title }}</a></li>
+    {% endfor %}
+    </ul>
+
+    <a href="/">عودة للصفحة الرئيسية</a>
+</body>
+</html>
