@@ -1,0 +1,32 @@
+from flask import Flask, render_template, request
+import requests
+from bs4 import BeautifulSoup
+import urllib.parse
+
+app = Flask(__name__)
+
+def search_google(image_url):
+    google_url = f"https://www.google.com/searchbyimage?image_url={urllib.parse.quote(image_url)}"
+    response = requests.get(google_url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    results = soup.find_all('div', class_='g')
+    return [{'title': r.find('h3').text, 'link': r.find('a')['href']} for r in results[:5]]
+
+def search_yandex(image_url):
+    yandex_url = f"https://yandex.com/images/search?url={urllib.parse.quote(image_url)}&rpt=imageview"
+    response = requests.get(yandex_url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    results = soup.find_all('div', class_='serp-item')
+    return [{'title': r.find('div', class_='serp-item__title').text, 'link': r.find('a')['href']} for r in results[:5]]
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        image_url = request.form['image_url']
+        google_results = search_google(image_url)
+        yandex_results = search_yandex(image_url)
+        return render_template('results.html', google_results=google_results, yandex_results=yandex_results)
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
